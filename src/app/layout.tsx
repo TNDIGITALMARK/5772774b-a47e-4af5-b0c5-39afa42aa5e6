@@ -6,6 +6,7 @@ import { QueryProvider } from "@/components/query-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { WhiteLabelProvider } from "@/lib/white-label";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Elegant Flora Boutique",
-  description: "Beautiful AI-powered website creation platform",
+  title: "NEXUS CRM - Multi-Tenant CRM Platform",
+  description: "Comprehensive multi-tenant SaaS CRM platform with AI-powered automation, white-label capabilities, and phone integration",
 };
 
 export default function RootLayout({
@@ -39,11 +40,13 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TooltipProvider>
-              {children}
-              <Toaster />
-              <Sonner />
-            </TooltipProvider>
+            <WhiteLabelProvider>
+              <TooltipProvider>
+                {children}
+                <Toaster />
+                <Sonner />
+              </TooltipProvider>
+            </WhiteLabelProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>
