@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle, ArrowRight, Users, Target, Zap, Shield, TrendingUp, Calendar, Phone } from "lucide-react"
 import Link from "next/link"
+import { PricingButton, StartTrialButton } from "@/components/pricing-buttons"
 
 export const dynamic = 'force-dynamic'
 
@@ -50,10 +51,7 @@ export default function HomePage() {
               and scale your business with AI-powered insights.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button size="lg" className="bg-[hsl(var(--crm-accent))] text-black hover:bg-[hsl(var(--crm-accent))] hover:brightness-90 px-8 py-3 text-lg font-semibold">
-                Start Free Trial
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+              <StartTrialButton className="bg-[hsl(var(--crm-accent))] text-black hover:bg-[hsl(var(--crm-accent))] hover:brightness-90 px-8 py-3 text-lg font-semibold" />
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-[hsl(var(--crm-navy))] px-8 py-3 text-lg">
                 Watch Demo
               </Button>
@@ -172,9 +170,12 @@ export default function HomePage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full" variant="outline">
-                  Get Started Free
-                </Button>
+                <PricingButton
+                  planType="FREE"
+                  buttonText="Get Started Free"
+                  variant="outline"
+                  className="w-full"
+                />
               </CardFooter>
             </Card>
 
@@ -220,9 +221,11 @@ export default function HomePage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full bg-[hsl(var(--crm-navy))] hover:bg-[hsl(var(--crm-navy-dark))]">
-                  Start Pro Trial
-                </Button>
+                <PricingButton
+                  planType="PRO"
+                  buttonText="Start Pro Trial"
+                  className="w-full bg-[hsl(var(--crm-navy))] hover:bg-[hsl(var(--crm-navy-dark))]"
+                />
               </CardFooter>
             </Card>
 
@@ -267,9 +270,11 @@ export default function HomePage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full bg-[hsl(var(--crm-accent))] text-black hover:brightness-90">
-                  Contact Sales
-                </Button>
+                <PricingButton
+                  planType="AGENCY"
+                  buttonText="Contact Sales"
+                  className="w-full bg-[hsl(var(--crm-accent))] text-black hover:brightness-90"
+                />
               </CardFooter>
             </Card>
           </div>
@@ -313,10 +318,7 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Button size="lg" className="bg-[hsl(var(--crm-navy))] hover:bg-[hsl(var(--crm-navy-dark))] px-8 py-3">
-              Start Your Free Trial Today
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <StartTrialButton className="bg-[hsl(var(--crm-navy))] hover:bg-[hsl(var(--crm-navy-dark))] px-8 py-3" />
           </div>
         </div>
       </section>

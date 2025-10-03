@@ -1,0 +1,171 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PlanType {
+  FREE
+  PRO
+  AGENCY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+  TRIALING
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  REQUIRES_ACTION
+}
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  name              String?
+  hashedPassword    String?
+  emailVerified     DateTime?
+  image             String?
+  company           String?
+  phone             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Stripe customer ID for payment processing
+  stripeCustomerId  String?  @unique
+
+  // Current subscription
+  subscription      Subscription?
+
+  // Payment history
+  payments          Payment[]
+
+  // CRM related data
+  contacts          Contact[]
+  campaigns         Campaign[]
+
+  @@map("users")
+}
+
+model Subscription {
+  id                String             @id @default(cuid())
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Stripe subscription details
+  stripeSubscriptionId String?         @unique
+  stripePriceId     String?
+  stripeProductId   String?
+
+  // Plan details
+  planType          PlanType
+  status            SubscriptionStatus @default(TRIALING)
+
+  // Billing cycle
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+
+  // Trial information
+  trialStart        DateTime?
+  trialEnd          DateTime?
+
+  // Cancellation
+  cancelAtPeriodEnd Boolean            @default(false)
+  canceledAt        DateTime?
+
+  // Pricing
+  pricePerMonth     Int                // Price in cents
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id                String         @id @default(cuid())
+  userId            String
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Stripe payment details
+  stripePaymentIntentId String?    @unique
+  stripeInvoiceId       String?
+
+  // Payment information
+  amount            Int            // Amount in cents
+  currency          String         @default("usd")
+  status            PaymentStatus  @default(PENDING)
+
+  // Metadata
+  description       String?
+  metadata          Json?          // Additional payment metadata
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@map("payments")
+}
+
+// CRM Models
+model Contact {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName   String
+  lastName    String?
+  email       String?
+  phone       String?
+  company     String?
+  position    String?
+
+  // Contact lifecycle
+  status      String   @default("active") // active, inactive, lead, customer
+  source      String?  // how they were acquired
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("contacts")
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  type        String   // email, sms, phone, etc.
+  status      String   @default("draft") // draft, active, paused, completed
+
+  // Campaign metrics
+  sent        Int      @default(0)
+  opened      Int      @default(0)
+  clicked     Int      @default(0)
+  converted   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("campaigns")
+}
